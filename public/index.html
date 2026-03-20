@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OwnedBy — Know Who Owns Your Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f1ea;
+  --surface: #fff;
+  --border: #ddd8ce;
+  --text: #1a1814;
+  --muted: #7a7368;
+  --pe-red: #c0392b;
+  --pe-red-bg: #fdf0ef;
+  --pe-red-border: #f5c6c2;
+  --indie-green: #1a6b3c;
+  --indie-green-bg: #edf7f1;
+  --indie-green-border: #b8dfca;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; min-height: 100vh; }
+.banner { background: var(--text); color: var(--bg); text-align: center; padding: 0.5rem 1rem; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+header { background: var(--surface); border-bottom: 1.5px solid var(--text); padding: 1.5rem 2rem; display: flex; align-items: flex-end; gap: 1.5rem; flex-wrap: wrap; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.04em; line-height: 1; }
+.logo span { color: var(--pe-red); }
+.tagline { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+.city-badge { background: var(--text); color: var(--bg); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 2px; }
+.search-section { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.25rem 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.type-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.pill { border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'Sora', sans-serif; font-size: 0.8rem; font-weight: 500; padding: 0.45rem 1rem; border-radius: 100px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.pill:hover { border-color: var(--text); color: var(--text); }
+.pill.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+.search-box-wrap { margin-left: auto; display: flex; gap: 0.5rem; align-items: center; }
+.search-input { font-family: 'Sora', sans-serif; font-size: 0.85rem; border: 1.5px solid var(--border); background: var(--bg); color: var(--text); padding: 0.5rem 1rem; border-radius: 100px; outline: none; width: 220px; transition: border-color 0.15s; }
+.search-input:focus { border-color: var(--text); }
+.sort-select { font-family: 'Sora', sans-serif; font-size: 0.8rem; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); padding: 0.45rem 0.8rem; border-radius: 100px; outline: none; cursor: pointer; }
+.stats-bar { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); }
+.stat-cell { flex: 1; padding: 1rem 1.5rem; border-right: 1px solid var(--border); text-align: center; }
+.stat-cell:last-child { border-right: none; }
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.05em; line-height: 1; }
+.stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.2rem; font-weight: 500; }
+.stat-cell.red .stat-num { color: var(--pe-red); }
+.stat-cell.green .stat-num { color: var(--indie-green); }
+main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+.results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.results-count { font-size: 0.8rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; }
+.legend { display: flex; gap: 1.5rem; align-items: center; font-size: 0.75rem; color: var(--muted); }
+.legend-item { display: flex; align-items: center; gap: 0.4rem; }
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.card { background: var(--surface); padding: 1.4rem 1.5rem; transition: background 0.1s; }
+.card:hover { background: #faf8f4; }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; gap: 0.75rem; }
+.card-name { font-size: 1rem; font-weight: 600; line-height: 1.3; color: var(--text); }
+.ownership-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 2px; white-space: nowrap; flex-shrink: 0; }
+.badge-pe { background: var(--pe-red-bg); color: var(--pe-red); border: 1px solid var(--pe-red-border); }
+.badge-indie { background: var(--indie-green-bg); color: var(--indie-green); border: 1px solid var(--indie-green-border); }
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.dot-pe { background: var(--pe-red); }
+.dot-indie { background: var(--indie-green); }
+.card-meta { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+.card-meta strong { color: var(--text); font-weight: 500; }
+.card-type-tag { display: inline-block; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); padding: 0.15rem 0.55rem; border-radius: 2px; margin-bottom: 0.6rem; }
+.pe-owner-note { margin-top: 0.75rem; padding: 0.6rem 0.8rem; background: var(--pe-red-bg); border-left: 3px solid var(--pe-red); font-size: 0.78rem; color: var(--pe-red); line-height: 1.5; }
+.indie-note { margin-top: 0.6rem; font-size: 0.8rem; color: var(--indie-green); }
+.source-link { display: inline-block; margin-top: 0.6rem; font-size: 0.72rem; color: var(--muted); text-decoration: none; border-bottom: 1px dashed var(--border); transition: color 0.15s; }
+.source-link:hover { color: var(--text); }
+.no-results { text-align: center; padding: 4rem 2rem; color: var(--muted); background: var(--surface); width: 100%; }
+.no-results-big { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 0.05em; color: var(--border); display: block; }
+.loading { text-align: center; padding: 4rem; color: var(--muted); font-size: 0.9rem; background: var(--surface); width: 100%; }
+footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.75rem; color: var(--muted); line-height: 1.8; background: var(--surface); margin-top: 3rem; }
+footer a { color: var(--muted); }
+@media (max-width: 600px) {
+  header { padding: 1rem; }
+  main { padding: 1rem; }
+  .search-section { padding: 1rem; }
+  .search-box-wrap { margin-left: 0; width: 100%; }
+  .search-input { flex: 1; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-cell { min-width: 50%; }
+  .logo { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="banner">Charlotte, NC pilot — Data sourced from PE Stakeholder Project, OpenCorporates &amp; NC Secretary of State</div>
+
+<header>
+  <div style="flex:1;min-width:200px;">
+    <div class="logo">Owned<span>By</span></div>
+    <div class="tagline">Know who really owns your doctor, dentist, or vet</div>
+  </div>
+  <div class="city-badge" id="cityBadge">Charlotte, NC</div>
+</header>
+
+<div class="search-section">
+  <div class="type-pills">
+    <button class="pill active" data-type="all">All</button>
+    <button class="pill" data-type="vet">Veterinarians</button>
+    <button class="pill" data-type="dentist">Dentists</button>
+    <button class="pill" data-type="primary">Primary Care</button>
+  </div>
+  <div class="search-box-wrap">
+    <input class="search-input" type="text" id="searchInput" placeholder="Search name or neighborhood…">
+    <select class="sort-select" id="sortSelect">
+      <option value="alpha">A–Z</option>
+      <option value="pe-first">PE-backed first</option>
+      <option value="indie-first">Independent first</option>
+    </select>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-cell"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Confirmed listings</div></div>
+  <div class="stat-cell red"><div class="stat-num" id="statPE">—</div><div class="stat-label">PE-backed</div></div>
+  <div class="stat-cell green"><div class="stat-num" id="statIndie">—</div><div class="stat-label">Independent</div></div>
+  <div class="stat-cell"><div class="stat-num" id="statPct">—</div><div class="stat-label">PE ownership rate</div></div>
+</div>
+
+<main>
+  <div class="results-header">
+    <div class="results-count" id="resultsCount">Loading…</div>
+    <div class="legend">
+      <div class="legend-item"><span class="dot dot-pe"></span> PE-backed</div>
+      <div class="legend-item"><span class="dot dot-indie"></span> Independent</div>
+    </div>
+  </div>
+  <div class="cards-grid" id="cardsGrid">
+    <div class="loading">Loading providers…</div>
+  </div>
+</main>
+
+<footer>
+  <strong>OwnedBy — Charlotte, NC Pilot</strong><br>
+  Data sourced from the <a href="https://pestakeholder.org" target="_blank">PE Stakeholder Project</a>, <a href="https://opencorporates.com" target="_blank">OpenCorporates</a>, and NC Secretary of State filings.<br>
+  Only confirmed PE-backed or confirmed independent practices are listed. Ownership listed as "unknown" is omitted.<br><br>
+  Think a listing is wrong? <a href="mailto:corrections@ownedby.app">Submit a correction</a>
+</footer>
+
+<script>
+const typeLabels = { vet: 'Veterinarian', dentist: 'Dentist', primary: 'Primary Care' };
+let allData = [];
+let activeType = 'all';
+let searchTerm = '';
+let sortMode = 'alpha';
+
+async function loadData() {
+  try {
+    const res = await fetch('/api/providers?city=Charlotte');
+    allData = await res.json();
+    refresh();
+  } catch (e) {
+    document.getElementById('cardsGrid').innerHTML = '<div class="no-results"><span class="no-results-big">ERROR</span><p>Could not load provider data.</p></div>';
+  }
+}
+
+function getFiltered() {
+  let data = allData.slice();
+  if (activeType !== 'all') data = data.filter(d => d.type === activeType);
+  if (searchTerm) {
+    const q = searchTerm.toLowerCase();
+    data = data.filter(d =>
+      d.name.toLowerCase().includes(q) ||
+      d.neighborhood.toLowerCase().includes(q) ||
+      d.address.toLowerCase().includes(q)
+    );
+  }
+  if (sortMode === 'alpha') data.sort((a, b) => a.name.localeCompare(b.name));
+  else if (sortMode === 'pe-first') data.sort((a, b) => (b.pe ? 1 : 0) - (a.pe ? 1 : 0));
+  else if (sortMode === 'indie-first') data.sort((a, b) => (a.pe ? 1 : 0) - (b.pe ? 1 : 0));
+  return data;
+}
+
+function updateStats(data) {
+  const pe = data.filter(d => d.pe).length;
+  const indie = data.filter(d => !d.pe).length;
+  const total = data.length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPE').textContent = pe;
+  document.getElementById('statIndie').textContent = indie;
+  document.getElementById('statPct').textContent = total ? Math.round((pe / total) * 100) + '%' : '—';
+  document.getElementById('resultsCount').textContent = `${total} confirmed listing${total !== 1 ? 's' : ''}`;
+}
+
+function renderCards(data) {
+  const grid = document.getElementById('cardsGrid');
+  if (data.length === 0) {
+    grid.innerHTML = '<div class="no-results"><span class="no-results-big">NO RESULTS</span><p>Try a different search or filter.</p></div>';
+    return;
+  }
+  grid.innerHTML = data.map(d => {
+    const badge = d.pe
+      ? `<span class="ownership-badge badge-pe"><span class="dot dot-pe"></span>PE-Backed</span>`
+      : `<span class="ownership-badge badge-indie"><span class="dot dot-indie"></span>Independent</span>`;
+    const note = d.pe
+      ? `<div class="pe-owner-note"><strong>Owner:</strong> ${d.owner}<br>${d.pe_firm}</div>`
+      : `<div class="indie-note">&#10003; ${d.note || d.owner}</div>`;
+    return `
+      <div class="card">
+        <div><span class="card-type-tag">${typeLabels[d.type]}</span></div>
+        <div class="card-top">
+          <div class="card-name">${d.name}</div>
+          ${badge}
+        </div>
+        <div class="card-meta"><strong>${d.neighborhood}</strong> · ${d.address}</div>
+        ${note}
+        <a class="source-link" href="${d.source_url}" target="_blank">Source: ${d.source_label} ↗</a>
+      </div>`;
+  }).join('');
+}
+
+function refresh() {
+  const data = getFiltered();
+  updateStats(data);
+  renderCards(data);
+}
+
+document.querySelectorAll('.pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeType = btn.dataset.type;
+    refresh();
+  });
+});
+document.getElementById('searchInput').addEventListener('input', e => { searchTerm = e.target.value.trim(); refresh(); });
+document.getElementById('sortSelect').addEventListener('change', e => { sortMode = e.target.value; refresh(); });
+
+loadData();
+</script>
+</body>
+</html>
